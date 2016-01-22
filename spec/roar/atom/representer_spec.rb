@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'spec_helper'
 
 describe Roar::Atom::Representer do
   let(:atom_feed_representer) do
