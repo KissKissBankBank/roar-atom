@@ -1,11 +1,7 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Roar::Atom do
   it 'has a version number' do
     expect(Roar::Atom::VERSION).not_to be nil
-  end
-
-  it 'does something useful' do
-    expect(false).to eq(true)
   end
 end

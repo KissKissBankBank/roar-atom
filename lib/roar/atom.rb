@@ -1,7 +1,2 @@
-require "roar/atom/version"
-
-module Roar
-  module Atom
-    # Your code goes here...
-  end
-end
+require 'roar/atom/version'
+require 'roar/atom/representer'
