@@ -55,26 +55,38 @@ describe Roar::Atom::Representer do
     end
 
     context 'with author element' do
+      let(:author_name) { 'Marvel' }
+      let(:atom_person) { ::Atom::Person.new(name: author_name) }
+
       before do
-        allow(feed).to receive(:add_atom_authors)
-        feed.authors = ['Marvel']
+        feed.authors = [author_name]
         subject
       end
 
-      it 'fills the atom feed with an author element' do
-        expect(feed).to have_received(:add_atom_authors)
+      it 'fills the ouput authors attribute with Atom::Person' do
+        expect(subject.authors).to include(::Atom::Person)
+      end
+
+      it 'fills elements for an atom person' do
+        expect(subject.authors).to include(atom_person)
       end
     end
 
     context 'with link element' do
+      let(:link)      { 'http://marvel.wikia.com/wiki/Black_Widow' }
+      let(:atom_link) { ::Atom::Link.new(href: link) }
+
       before do
-        allow(feed).to receive(:add_atom_links)
-        feed.links = ['http://marvel.wikia.com/wiki/Avengers']
+        feed.links = [link]
         subject
       end
 
-      it 'fills the atom feed with a link element' do
-        expect(feed).to have_received(:add_atom_links)
+      it 'fills the output links attribute with Atom::Link' do
+        expect(subject.links).to include(::Atom::Link)
+      end
+
+      it 'fills elements for an atom link' do
+        expect(subject.links).to include(atom_link)
       end
     end
 
@@ -123,42 +135,6 @@ describe Roar::Atom::Representer do
           expect(feed).to have_received(:add_atom_links)
         end
       end
-    end
-  end
-
-  describe '#add_atom_authors' do
-    let(:author_name) { 'Marvel' }
-    let(:authors)     { [author_name] }
-    let(:output)      { double(:output, authors: []) }
-    let(:atom_person) { ::Atom::Person.new(name: author_name) }
-    subject { feed.send(:add_atom_authors, output, authors) }
-
-    before { subject }
-
-    it 'fills the ouput authors attribute with Atom::Person' do
-      expect(output.authors).to include(::Atom::Person)
-    end
-
-    it 'fills elements for an atom person' do
-      expect(output.authors).to include(atom_person)
-    end
-  end
-
-  describe '#add_atom_links' do
-    let(:link)      { 'http://marvel.wikia.com/wiki/Black_Widow' }
-    let(:links)     { [link] }
-    let(:output)    { double(:output, links: [])}
-    let(:atom_link) { ::Atom::Link.new(href: link) }
-    subject { feed.send(:add_atom_links, output, links) }
-
-    before { subject }
-
-    it 'fills the output links attribute with Atom::Link' do
-      expect(output.links).to include(::Atom::Link)
-    end
-
-    it 'fills elements for an atom link' do
-      expect(output.links).to include(atom_link)
     end
   end
 end
