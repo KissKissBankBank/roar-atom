@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Roar::Atom::Representer do
-  let(:atom_feed_representer) do
-    Class.new do
+  let(:avengers_feed_representer) do
+    Module.new do
       include Roar::Atom::Representer
 
       property :id
@@ -14,7 +14,11 @@ describe Roar::Atom::Representer do
       property :xml_namespace
 
       collection :entries
+    end
+  end
 
+  let(:avengers_class) do
+    Class.new do
       attr_accessor :authors
       attr_accessor :links
       attr_accessor :entries
@@ -34,7 +38,9 @@ describe Roar::Atom::Representer do
     end
   end
 
-  let(:feed) { atom_feed_representer.new }
+  let(:feed) do
+    avengers_class.new.extend(avengers_feed_representer)
+  end
 
   it 'includes Roar::Representer' do
     expect(feed).to be_kind_of(Roar::Representer)
