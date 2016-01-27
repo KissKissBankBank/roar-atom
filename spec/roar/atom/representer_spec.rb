@@ -10,12 +10,15 @@ describe Roar::Atom::Representer do
       property :updated
       property :authors
       property :links
+      property :custom_friend
+      property :xml_namespace
 
       collection :entries
 
       attr_accessor :authors
       attr_accessor :links
       attr_accessor :entries
+      attr_accessor :custom_friend
 
       def id
         'marvel:avengers'
@@ -87,6 +90,41 @@ describe Roar::Atom::Representer do
 
       it 'fills elements for an atom link' do
         expect(subject.links).to include(atom_link)
+      end
+    end
+
+    context 'with extension element' do
+      let(:custom_friend) { 'Hawkeye' }
+      let(:extension_element_key) { '{http://marvel.wikia.com,custom_friend}' }
+
+      context 'with valid parameters' do
+        before do
+          feed.custom_friend = custom_friend
+          feed.xml_namespace = 'http://marvel.wikia.com'
+          subject
+        end
+
+        it 'creates an element with a custom namespace' do
+          expect(subject
+                   .simple_extensions
+                   .has_key?(extension_element_key))
+            .to be_truthy
+        end
+
+        it 'fills the value for the custom element' do
+          expect(subject.simple_extensions[extension_element_key])
+            .to eq [custom_friend]
+        end
+      end
+
+      context 'without an xml_namespace' do
+        before do
+          feed.custom_friend = custom_friend
+        end
+
+        it 'returns an exception' do
+          expect{ subject }.to raise_error(ArgumentError)
+        end
       end
     end
 

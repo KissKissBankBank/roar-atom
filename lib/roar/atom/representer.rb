@@ -43,40 +43,49 @@ module Roar
                                 ['name', 'uri', 'email']
                             }
 
+        LIST_PROPERTIES ||= ['authors', 'links', 'entries']
+
+        attr_accessor :xml_namespace
+
         def serialize(*args)
           to_atom
         end
 
         def to_atom
-          data = self.to_hash.with_indifferent_access
+          data           = to_hash.with_indifferent_access
+          @xml_namespace = data.delete(:xml_namespace)
 
           ::Atom::Feed.new do |f|
             data.each do |element, value|
-              if ATOM_NAMESPACES[:feed].include?(element.to_s)
+              if ATOM_NAMESPACES[:feed].include?(element)
                 f.send("#{element}=", value)
-              end
-            end
+              elsif LIST_PROPERTIES.include?(element)
+                send("add_atom_#{element}".to_sym, f, data[element])
+              else
+                error_message = 'Roar::Atom::Representer does not have xml_namespace'
+                fail ArgumentError, error_message unless xml_namespace
 
-            add_atom_authors(f, data[:authors]) if data[:authors]
-            add_atom_links(f, data[:links])     if data[:links]
-
-            if data[:entries]
-              data[:entries].each do |entry|
-                f.entries << ::Atom::Entry.new do |e|
-                  entry.each do |element, value|
-                    if ATOM_NAMESPACES[:entry].include?(element.to_s)
-                      e.send("#{element}=", value)
-                    end
-                  end
-
-                  add_atom_links e, entry[:links] if entry[:links]
-                end
+                f[xml_namespace, element] << value
               end
             end
           end
         end
 
         private
+
+        def add_atom_entries(output, entries)
+          entries.each do |entry|
+            output.entries << ::Atom::Entry.new do |e|
+              entry.each do |element, value|
+                if ATOM_NAMESPACES[:entry].include?(element.to_s)
+                  e.send("#{element}=", value)
+                end
+              end
+
+              add_atom_links e, entry[:links] if entry[:links]
+            end
+          end
+        end
 
         def add_atom_authors(output, authors)
           authors.each do |author|
