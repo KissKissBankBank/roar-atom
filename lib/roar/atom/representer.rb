@@ -57,15 +57,17 @@ module Roar
 
           ::Atom::Feed.new do |f|
             data.each do |element, value|
-              if ATOM_NAMESPACES[:feed].include?(element)
-                f.send("#{element}=", value)
-              elsif LIST_PROPERTIES.include?(element)
-                send("add_atom_#{element}".to_sym, f, data[element])
+              atom_element = element.gsub(/^atom_/, '')
+
+              if ATOM_NAMESPACES[:feed].include?(atom_element)
+                f.send("#{atom_element}=", value)
+              elsif LIST_PROPERTIES.include?(atom_element)
+                send("add_atom_#{atom_element}".to_sym, f, data[element])
               else
                 error_message = 'Roar::Atom::Representer does not have xml_namespace'
                 fail ArgumentError, error_message unless xml_namespace
 
-                f[xml_namespace, element] << value
+                f[xml_namespace, atom_element] << value
               end
             end
           end
