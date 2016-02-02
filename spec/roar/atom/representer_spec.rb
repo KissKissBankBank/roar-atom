@@ -64,11 +64,22 @@ describe Roar::Atom::Representer do
     end
 
     context 'with author element' do
-      let(:author_name) { 'Marvel' }
-      let(:atom_person) { ::Atom::Person.new(name: author_name) }
+      let(:author_name)  { 'Marvel' }
+      let(:author_uri)   { 'http://marvel.wikia.com' }
+      let(:author_email) { 'root@marvel.wikia.com' }
+      let(:author) do
+        { name:  author_name,
+          uri:   author_uri,
+          email: author_email }
+      end
+      let(:atom_person) do
+        ::Atom::Person.new(name:  author_name,
+                           uri:   author_uri,
+                           email: author_email)
+      end
 
       before do
-        feed.authors = [author_name]
+        feed.authors = [author]
         subject
       end
 
