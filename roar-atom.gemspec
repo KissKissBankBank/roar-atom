@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
 
   # Manage representers.
   spec.add_dependency 'roar', '>= 1.0.3'
+  spec.add_dependency 'ratom', '>= 0.9.0'
 
   spec.add_development_dependency 'bundler', '~> 1.8'
   spec.add_development_dependency 'rake', '~> 10.0'
