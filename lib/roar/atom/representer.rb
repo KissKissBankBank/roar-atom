@@ -57,34 +57,35 @@ module Roar
 
           ::Atom::Feed.new do |f|
             data.each do |element, value|
-              atom_element = element.gsub(/^atom_/, '')
-
-              if ATOM_NAMESPACES[:feed].include?(atom_element)
-                f.send("#{atom_element}=", value)
-              elsif LIST_PROPERTIES.include?(atom_element)
-                send("add_atom_#{atom_element}".to_sym, f, data[element])
-              else
-                error_message = 'Roar::Atom::Representer does not have xml_namespace'
-                fail ArgumentError, error_message unless xml_namespace
-
-                f[xml_namespace, atom_element] << value
-              end
+              add_atom_element(f, element, value)
             end
           end
         end
 
         private
 
+        def add_atom_element(output, element, value)
+          atom_element = element.gsub(/^atom_/, '')
+
+          if ATOM_NAMESPACES[:feed].include?(atom_element)
+            output.send("#{atom_element}=", value)
+          elsif LIST_PROPERTIES.include?(atom_element)
+            send("add_atom_#{atom_element}".to_sym, output, value)
+          else
+            unless xml_namespace
+              fail ArgumentError, 'Roar::Atom::Representer does not have xml_namespace'
+            end
+
+            output[xml_namespace, atom_element] << value
+          end
+        end
+
         def add_atom_entries(output, entries)
           entries.each do |entry|
             output.entries << ::Atom::Entry.new do |e|
               entry.each do |element, value|
-                if ATOM_NAMESPACES[:entry].include?(element.to_s)
-                  e.send("#{element}=", value)
-                end
+                add_atom_element(e, element, value)
               end
-
-              add_atom_links e, entry[:links] if entry[:links]
             end
           end
         end
