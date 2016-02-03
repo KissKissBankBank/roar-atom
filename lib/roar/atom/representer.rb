@@ -66,17 +66,17 @@ module Roar
 
           ::Atom::Feed.new do |f|
             data.each do |element, value|
-              add_atom_element(f, element, value)
+              add_atom_element(ATOM_NAMESPACES[:feed], f, element, value)
             end
           end
         end
 
         private
 
-        def add_atom_element(output, element, value)
+        def add_atom_element(namespace, output, element, value)
           atom_element = element.gsub(/^atom_/, '')
 
-          if ATOM_NAMESPACES[:feed].include?(atom_element)
+          if namespace.include?(atom_element)
             output.send("#{atom_element}=", value)
           elsif LIST_PROPERTIES.include?(atom_element)
             send("add_atom_#{atom_element}".to_sym, output, value)
@@ -93,7 +93,7 @@ module Roar
           entries.each do |entry|
             output.entries << ::Atom::Entry.new do |e|
               entry.each do |element, value|
-                add_atom_element(e, element, value)
+                add_atom_element(ATOM_NAMESPACES[:entry], e, element, value)
               end
             end
           end
