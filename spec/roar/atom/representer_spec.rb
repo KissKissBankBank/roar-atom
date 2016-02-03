@@ -116,10 +116,12 @@ describe Roar::Atom::Representer do
       let(:author_name)  { 'Marvel' }
       let(:author_uri)   { 'http://marvel.wikia.com' }
       let(:author_email) { 'root@marvel.wikia.com' }
+      let(:author_age)   { 42 }
       let(:author) do
         { name:  author_name,
           uri:   author_uri,
-          email: author_email }
+          email: author_email,
+          age:   author_age }
       end
       let(:atom_person) do
         ::Atom::Person.new(name:  author_name,

@@ -101,7 +101,7 @@ module Roar
 
         def add_atom_authors(output, authors)
           authors.each do |author|
-            author.reject do |attribute, value|
+            author = author.reject do |attribute, value|
               !ATOM_NAMESPACES[:person].include?(attribute)
             end
 
