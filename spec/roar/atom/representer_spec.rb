@@ -5,11 +5,18 @@ describe Roar::Atom::Representer do
     Module.new do
       include Roar::Atom::Representer
 
+      # Atom required elements
       property :id
       property :title
       property :updated
+
+      # Atom optional elements
+      property :atom_subtitle
       property :authors
       property :links
+
+      # Custom elements
+      property :atom_custom_introduction
       property :custom_friend
       property :xml_namespace
 
@@ -19,6 +26,8 @@ describe Roar::Atom::Representer do
 
   let(:avengers_class) do
     Class.new do
+      attr_accessor :atom_custom_introduction
+      attr_accessor :atom_subtitle
       attr_accessor :authors
       attr_accessor :links
       attr_accessor :entries
@@ -61,6 +70,46 @@ describe Roar::Atom::Representer do
       expect(subject.id).to eq      'marvel:avengers'
       expect(subject.title).to eq   'The Avengers'
       expect(subject.updated).to eq '2016-12-21T00:00:02Z'
+    end
+
+    context 'with an attribute prefixed by `atom_`' do
+      context 'when the prefixed element is an Atom element' do
+        let(:subtitle) { 'There are the Avengers stories.' }
+        before do
+          feed.atom_subtitle = subtitle
+          subject
+        end
+
+        it 'fills an regular atom element' do
+          expect(subject.subtitle).to eq subtitle
+        end
+      end
+
+      context 'when the prefixed element is an custom element' do
+        let(:introduction) { 'An fantastic introduction' }
+        let(:extension_element_key) do
+          '{http://marvel.wikia.com,custom_introduction}'
+        end
+
+        before do
+          feed.xml_namespace = 'http://marvel.wikia.com'
+          feed.atom_custom_introduction = introduction
+          subject
+        end
+
+        it 'creates an element with a custom namespace' do
+          expect(subject
+                   .simple_extensions
+                   .has_key?(extension_element_key))
+            .to be_truthy
+        end
+
+        it 'fills the value for the custom element' do
+          expect(subject.simple_extensions[extension_element_key])
+            .to eq [introduction]
+        end
+
+      end
     end
 
     context 'with author element' do
@@ -188,6 +237,27 @@ describe Roar::Atom::Representer do
 
         it 'fills the atom entry with a link element' do
           expect(feed).to have_received(:add_atom_links)
+        end
+      end
+
+      context 'with entry author element' do
+        let(:author_name)  { 'Stan Lee' }
+        let(:author_uri)   { 'https://twitter.com/therealstanlee' }
+        let(:author_email) { 'stan-lee@marvel.wikia.com' }
+        let(:author) do
+          { name:  author_name,
+            uri:   author_uri,
+            email: author_email }
+        end
+
+        before do
+          allow(feed).to receive(:add_atom_authors)
+          black_widow[:authors] = [author]
+          subject
+        end
+
+        it 'fills the atom entry with a author element' do
+          expect(feed).to have_received(:add_atom_authors)
         end
       end
     end
