@@ -102,14 +102,24 @@ class AvengersAtomFeedRepresenter
 end
 ```
 
-These attributes should return an array:
+These attributes should return an array of hashes:
+- with [link attributes](http://atomenabled.org/developers/syndication/#link) for a `<link>` element
+- with [element names](http://atomenabled.org/developers/syndication/#person) for a `<author>` or `<contributor>` element
 
 ```ruby
 avengers = Avengers.new(id: 'marvel:avengers',
                         title: 'The Avengers',
                         updated: '2016-12-21T00:00:02Z',
-                        authors: ['Marvel', 'Stan Lee', 'Jack Kirby'],
-                        links: ['http://marvel.wikia.com/wiki/Avengers'])
+                        authors: [{
+                          name: 'Marvel',
+                          uri:  'http://marvel.wikia.com',
+                          email: 'root@marvel.wikia.com'
+                        }],
+                        links: [{
+                          href:  'http://marvel.wikia.com/wiki/Black_Widow',
+                          title: 'Black Widow profile',
+                          rel:   'self'
+                        }])
 
 avengers.extend(AvengersAtomFeedRepresenter)
 
@@ -122,20 +132,12 @@ avengers.to_atom
 #   ... xml elements
 #   <author>
 #     <name>Marvel</name>
+#     <uri>http://marvel.wikia.com</uri>
+#     <email>root@marvel.wikia.com</email>
 #   </author>
-#   <author>
-#     <name>Stan Lee</name>
-#   </author>
-#   <author>
-#     <name>Jack Kirby</name>
-#   </author>
-#   <link href="http://marvel.wikia.com/wiki/Avengers" />
+#   <link href="http://marvel.wikia.com/wiki/Avengers" title="Black Widowprofile" rel="self" />
 # </feed>
 ```
-
-For the moment, the representer only fills the element with the required attribute:
-- `name` for a Person
-- `href` for a Link
 
 ### Optional elements
 
@@ -209,6 +211,44 @@ avengers.to_atom
 # <?xml version="1.0" encoding="UTF-8"?>
 # <feed xmlns="http://www.w3.org/2005/Atom" xmlns:ns1="http://marvel.wikia.com">
 #   ... xml elements
+#   <ns1:custom_friend>Hawkeye</ns1:custom_friend>
+# </feed>
+```
+
+## Prefixed representer attributes
+Some Atom elements use the same naming as Class attributes (id, title, etc.). In order to avoid recursive attribute changes, you can declare the representer attribute (that stands for an Atom element) with the `atom_` prefix. It will return the same feed representer as you would have with regular attributes. Example:
+
+```
+# lib/avengers_atom_feed_representer.rb
+require 'roar/atom'
+
+class AvengersAtomFeedRepresenter
+  include Roar::Atom::Representer
+
+  property :atom_id
+  property :atom_title
+  property :atom_updated
+  property :atom_custom_friend
+end
+
+# avengers_feed.rb
+avengers = Avengers.new(id: 'marvel:avengers',
+                        title: 'The Avengers',
+                        updated: '2016-12-21T00:00:02Z',
+                        custom_friend: 'Hawkeye')
+
+avengers.extend(AvengersAtomFeedRepresenter)
+avengers.xml_namespace = 'http://marvel.wikia.com'
+
+avengers.to_atom
+        .to_xml
+
+#=>
+# <?xml version="1.0" encoding="UTF-8"?>
+# <feed xmlns="http://www.w3.org/2005/Atom" xmlns:ns1="http://marvel.wikia.com">
+#   <id>marvel:avengers</id>
+#   <title>The Avengers</title>
+#   <updated>2016-12-21T00:00:02Z</updated>
 #   <ns1:custom_friend>Hawkeye</ns1:custom_friend>
 # </feed>
 ```
