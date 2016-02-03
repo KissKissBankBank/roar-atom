@@ -136,14 +136,31 @@ describe Roar::Atom::Representer do
         expect(subject.authors).to include(::Atom::Person)
       end
 
-      it 'fills elements for an atom person' do
+      it 'only fills elements for an atom person' do
         expect(subject.authors).to include(atom_person)
       end
     end
 
     context 'with link element' do
-      let(:link)      { 'http://marvel.wikia.com/wiki/Black_Widow' }
-      let(:atom_link) { ::Atom::Link.new(href: link) }
+      let(:link_href)     { 'http://marvel.wikia.com/wiki/Black_Widow' }
+      let(:link_title)    { 'Black Widow profile'}
+      let(:link_hreflang) { 'en' }
+      let(:link_rel)      { 'self' }
+      let(:link_not_related_attribute) { 'Natasha Romanova' }
+      let(:link) do
+        { href: link_href,
+          title: link_title,
+          hreflang: link_hreflang,
+          rel: link_rel,
+          not_related: link_not_related_attribute }
+      end
+
+      let(:atom_link) do
+        ::Atom::Link.new(href:     link_href,
+                         title:    link_title,
+                         hreflang: link_hreflang,
+                         rel:      link_rel)
+      end
 
       before do
         feed.links = [link]
@@ -154,9 +171,10 @@ describe Roar::Atom::Representer do
         expect(subject.links).to include(::Atom::Link)
       end
 
-      it 'fills elements for an atom link' do
+      it 'only fills attributes for an atom link' do
         expect(subject.links).to include(atom_link)
       end
+
     end
 
     context 'with extension element' do

@@ -13,6 +13,8 @@ module Roar
         include Roar::Representer
         include Representable::Hash
 
+        # More information on Atom format:
+        # http://atomenabled.org/developers/syndication/
         ATOM_NAMESPACES ||= { feed:
                                 ['id',
                                  'title',
@@ -42,6 +44,13 @@ module Roar
                               person:
                                 ['name', 'uri', 'email']
                             }
+
+        ATOM_LINK_ATTRIBUTES ||= ['href',
+                                  'rel',
+                                  'type',
+                                  'hreflang',
+                                  'title',
+                                  'length']
 
         LIST_PROPERTIES ||= ['authors', 'links', 'entries']
 
@@ -100,9 +109,13 @@ module Roar
           end
         end
 
-        def add_atom_links(output, hrefs)
-          hrefs.each do |href|
-            output.links << ::Atom::Link.new(href: href)
+        def add_atom_links(output, links)
+          links.each do |link|
+            link = link.reject do |attribute, value|
+              !ATOM_LINK_ATTRIBUTES.include?(attribute)
+            end
+
+            output.links << ::Atom::Link.new(link)
           end
         end
       end
