@@ -218,7 +218,7 @@ avengers.to_atom
 ## Prefixed representer attributes
 Some Atom elements use the same naming as Class attributes (id, title, etc.). In order to avoid recursive attribute changes, you can declare the representer attribute (that stands for an Atom element) with the `atom_` prefix. It will return the same feed representer as you would have with regular attributes. Example:
 
-```
+```ruby
 # lib/avengers_atom_feed_representer.rb
 require 'roar/atom'
 
