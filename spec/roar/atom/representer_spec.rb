@@ -26,6 +26,7 @@ describe Roar::Atom::Representer do
 
   let(:avengers_class) do
     Class.new do
+      attr_accessor :updated_at
       attr_accessor :atom_custom_introduction
       attr_accessor :atom_subtitle
       attr_accessor :authors
@@ -42,7 +43,7 @@ describe Roar::Atom::Representer do
       end
 
       def updated
-        '2016-12-21T00:00:02Z'
+        updated_at || '2016-12-21T00:00:00Z'
       end
     end
   end
@@ -69,7 +70,64 @@ describe Roar::Atom::Representer do
     it 'fills required elements for an atom feed' do
       expect(subject.id).to eq      'marvel:avengers'
       expect(subject.title).to eq   'The Avengers'
-      expect(subject.updated).to eq '2016-12-21T00:00:02Z'
+      expect(subject.updated).to eq '2016-12-21T00:00:00Z'
+    end
+
+
+    context 'with date element' do
+      let(:rfc3339_regexp) do
+        /((\d{2,4})-?){3}T((\d{2}):?){3}(\+((\d{2}):?){2}|Z)+/
+      end
+
+      context 'when date is a Date' do
+        before do
+          feed.updated_at = Date.new(2016, 12, 21)
+        end
+
+        it 'format the date following the RFC 3339' do
+          expect(subject.updated).to match(rfc3339_regexp)
+        end
+      end
+
+      context 'when date is a DateTime' do
+        before do
+          feed.updated_at = DateTime.new(2016, 12, 21)
+        end
+
+        it 'format the date following the RFC 3339' do
+          expect(subject.updated).to match(rfc3339_regexp)
+        end
+      end
+
+      context 'when date is a Time' do
+        before do
+          feed.updated_at = Time.new(2016, 12, 21)
+        end
+
+        it 'format the date following the RFC 3339' do
+          expect(subject.updated).to match(rfc3339_regexp)
+        end
+      end
+
+      context 'when date is a RFC3339 date-time String' do
+        before do
+          feed.updated_at = '2016-12-21T00:00:00Z'
+        end
+
+        it 'format the date following the RFC 3339' do
+          expect(subject.updated).to match(rfc3339_regexp)
+        end
+      end
+
+      context 'when date is a regular String' do
+        before do
+          feed.updated_at = 'I am a date-time!'
+        end
+
+        it 'raises an error' do
+          expect{ subject }.to raise_error(TypeError)
+        end
+      end
     end
 
     context 'with an attribute prefixed by `atom_`' do

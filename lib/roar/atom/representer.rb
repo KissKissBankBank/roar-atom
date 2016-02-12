@@ -53,6 +53,7 @@ module Roar
                                   'length']
 
         LIST_PROPERTIES ||= ['authors', 'links', 'entries']
+        DATE_PROPERTIES ||= ['updated', 'published']
 
         attr_accessor :xml_namespace
 
@@ -76,6 +77,10 @@ module Roar
         def add_atom_element(namespace, output, element, value)
           atom_element = element.gsub(/^atom_/, '')
 
+          # Documentation for atom date construct:
+          # http://tools.ietf.org/html/rfc4287#section-3.3
+          value = format_date_element(value) if DATE_PROPERTIES.include?(element)
+
           if namespace.include?(atom_element)
             output.send("#{atom_element}=", value)
           elsif LIST_PROPERTIES.include?(atom_element)
@@ -87,6 +92,17 @@ module Roar
 
             output[xml_namespace, atom_element] << value
           end
+        end
+
+        def format_date_element(value)
+          return value if Roar::Atom::DateHelper.is_format_rfc3339?(value)
+
+          unless Roar::Atom::DateHelper.is_date?(value)
+            fail TypeError, "#{value} must be an instance of Date, DateTime,"\
+              "Time or a RFC 3339 date-time String"
+          end
+
+          Roar::Atom::DateHelper::to_rfc3339(value)
         end
 
         def add_atom_entries(output, entries)
