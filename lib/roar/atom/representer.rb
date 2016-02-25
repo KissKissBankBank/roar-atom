@@ -60,8 +60,8 @@ module Roar
           to_atom
         end
 
-        def to_atom
-          data           = to_hash.with_indifferent_access
+        def to_atom(options = {})
+          data           = to_hash(options).with_indifferent_access
           @xml_namespace = data.delete(:xml_namespace)
 
           ::Atom::Feed.new do |f|
