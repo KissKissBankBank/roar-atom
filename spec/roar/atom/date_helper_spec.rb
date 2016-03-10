@@ -34,50 +34,48 @@ describe Roar::Atom::DateHelper do
       it do
         expect{
           subject.to_rfc3339('DateTime.now')
-        }.to raise_error(TypeError)
+        }.to raise_error(NoMethodError)
       end
     end
   end
 
-  describe '.is_rfc3339?' do
+  describe '.is_rfc3339_format?' do
     context 'with a RFC 3339 date-time (String) with timezone' do
       it do
-        expect(subject.is_format_rfc3339?(rfc3339_date_with_timezone))
+        expect(subject.is_rfc3339_format?(rfc3339_date_with_timezone))
           .to be_truthy
       end
     end
 
     context 'with a RFC 3339 date-time (String) without timezone' do
       it do
-        expect(subject.is_format_rfc3339?(rfc3339_date))
+        expect(subject.is_rfc3339_format?(rfc3339_date))
           .to be_truthy
       end
     end
 
     context 'with a regular String instance' do
-      it { expect(subject.is_format_rfc3339?('DateTime.now')).to be_falsey }
+      it { expect(subject.is_rfc3339_format?('DateTime.now')).to be_falsey }
     end
 
     context 'with an instance of class different from String' do
-      it { expect(subject.is_format_rfc3339?(date_instance)).to be_falsey }
+      it { expect(subject.is_rfc3339_format?(date_instance)).to be_falsey }
     end
   end
 
-  describe '.is_date?' do
-    context 'with a Date instance' do
-      it { expect(subject.is_date?(date_instance)).to be_truthy }
+  describe '.format_date_element' do
+    context 'with a value already RFC 3339 formatted' do
+      it do
+        expect(subject.format_date_element(rfc3339_date_with_timezone))
+          .to eq(rfc3339_date_with_timezone)
+      end
     end
 
-    context 'with a TimeDate instance' do
-      it { expect(subject.is_date?(datetime_instance)).to be_truthy }
-    end
-
-    context 'with a Time instance' do
-      it { expect(subject.is_date?(time_instance)).to be_truthy }
-    end
-
-    context 'with a String instance' do
-      it { expect(subject.is_date?('This is a date.')).to be_falsey }
+    context 'with a unformatted value' do
+      it do
+        expect(subject.to_rfc3339(date_instance))
+          .to eq(date_instance.rfc3339)
+      end
     end
   end
 end

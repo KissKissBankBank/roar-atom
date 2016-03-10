@@ -79,7 +79,9 @@ module Roar
 
           # Documentation for atom date construct:
           # http://tools.ietf.org/html/rfc4287#section-3.3
-          value = format_date_element(value) if DATE_PROPERTIES.include?(element)
+          if DATE_PROPERTIES.include?(element)
+            value = Roar::Atom::DateHelper.format_date_element(value)
+          end
 
           if namespace.include?(atom_element)
             output.send("#{atom_element}=", value)
@@ -92,17 +94,6 @@ module Roar
 
             output[xml_namespace, atom_element] << value
           end
-        end
-
-        def format_date_element(value)
-          return value if Roar::Atom::DateHelper.is_format_rfc3339?(value)
-
-          unless Roar::Atom::DateHelper.is_date?(value)
-            fail TypeError, "#{value} must be an instance of Date, DateTime,"\
-              "Time or a RFC 3339 date-time String"
-          end
-
-          Roar::Atom::DateHelper::to_rfc3339(value)
         end
 
         def add_atom_entries(output, entries)
