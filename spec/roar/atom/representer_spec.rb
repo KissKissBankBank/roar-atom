@@ -84,7 +84,7 @@ describe Roar::Atom::Representer do
           feed.updated_at = Date.new(2016, 12, 21)
         end
 
-        it 'format the date following the RFC 3339' do
+        it 'formats the date following the RFC 3339' do
           expect(subject.updated).to match(rfc3339_regexp)
         end
       end
@@ -94,7 +94,7 @@ describe Roar::Atom::Representer do
           feed.updated_at = DateTime.new(2016, 12, 21)
         end
 
-        it 'format the date following the RFC 3339' do
+        it 'formats the date following the RFC 3339' do
           expect(subject.updated).to match(rfc3339_regexp)
         end
       end
@@ -104,7 +104,7 @@ describe Roar::Atom::Representer do
           feed.updated_at = Time.new(2016, 12, 21)
         end
 
-        it 'format the date following the RFC 3339' do
+        it 'formats the date following the RFC 3339' do
           expect(subject.updated).to match(rfc3339_regexp)
         end
       end
@@ -114,7 +114,7 @@ describe Roar::Atom::Representer do
           feed.updated_at = '2016-12-21T00:00:00Z'
         end
 
-        it 'format the date following the RFC 3339' do
+        it 'formats the date following the RFC 3339' do
           expect(subject.updated).to match(rfc3339_regexp)
         end
       end
