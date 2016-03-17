@@ -8,37 +8,6 @@ describe Roar::Atom::DateHelper do
   let(:rfc3339_date)               { '2016-02-09T00:05:24Z' }
   let(:rfc3339_date_with_timezone) { '2016-02-09T00:05:24+00:00' }
 
-  describe '.to_rfc3339' do
-    context 'with a Date instance' do
-      it do
-        expect(subject.to_rfc3339(date_instance))
-          .to eq(date_instance.rfc3339)
-      end
-    end
-
-    context 'with a DateTime instance' do
-      it do
-        expect(subject.to_rfc3339(datetime_instance))
-          .to eq(datetime_instance.rfc3339)
-      end
-    end
-
-    context 'with a Time instance' do
-      it do
-        expect(subject.to_rfc3339(time_instance))
-          .to eq(time_instance.to_datetime.rfc3339)
-      end
-    end
-
-    context 'with an instance of class different from Date, DateTime or Time' do
-      it do
-        expect{
-          subject.to_rfc3339('DateTime.now')
-        }.to raise_error(NoMethodError)
-      end
-    end
-  end
-
   describe '.is_rfc3339_format?' do
     context 'with a RFC 3339 date-time (String) with timezone' do
       it do
@@ -73,7 +42,7 @@ describe Roar::Atom::DateHelper do
 
     context 'with an unformatted value' do
       it do
-        expect(subject.to_rfc3339(date_instance))
+        expect(subject.format_date_element(date_instance))
           .to eq(date_instance.rfc3339)
       end
     end

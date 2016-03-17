@@ -125,7 +125,7 @@ describe Roar::Atom::Representer do
         end
 
         it 'raises an error' do
-          expect{ subject }.to raise_error(TypeError)
+          expect{ subject }.to raise_error(NoMethodError)
         end
       end
     end

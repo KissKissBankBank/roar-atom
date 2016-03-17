@@ -1,10 +1,6 @@
 module Roar
   module Atom
     class DateHelper
-      def self.to_rfc3339(date)
-        date.to_datetime.rfc3339
-      end
-
       def self.is_rfc3339_format?(value)
         return unless value.kind_of?(String)
 
@@ -19,7 +15,7 @@ module Roar
       def self.format_date_element(value)
         return value if is_rfc3339_format?(value)
 
-        to_rfc3339(value)
+        value.to_datetime.rfc3339
       end
     end
   end
