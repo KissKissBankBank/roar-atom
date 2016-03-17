@@ -14,6 +14,8 @@ module Roar
         match && match[0] == value
       end
 
+      # Documentation for atom date construct:
+      # http://tools.ietf.org/html/rfc4287#section-3.3
       def self.format_date_element(value)
         return value if is_rfc3339_format?(value)
 

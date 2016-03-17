@@ -71,7 +71,7 @@ describe Roar::Atom::DateHelper do
       end
     end
 
-    context 'with a unformatted value' do
+    context 'with an unformatted value' do
       it do
         expect(subject.to_rfc3339(date_instance))
           .to eq(date_instance.rfc3339)

@@ -77,8 +77,6 @@ module Roar
         def add_atom_element(namespace, output, element, value)
           atom_element = element.gsub(/^atom_/, '')
 
-          # Documentation for atom date construct:
-          # http://tools.ietf.org/html/rfc4287#section-3.3
           if DATE_PROPERTIES.include?(element)
             value = Roar::Atom::DateHelper.format_date_element(value)
           end
