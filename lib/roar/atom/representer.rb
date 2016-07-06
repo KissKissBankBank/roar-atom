@@ -53,6 +53,7 @@ module Roar
                                   'length']
 
         LIST_PROPERTIES ||= ['authors', 'links', 'entries']
+        DATE_PROPERTIES ||= ['updated', 'published']
 
         attr_accessor :xml_namespace
 
@@ -75,6 +76,10 @@ module Roar
 
         def add_atom_element(namespace, output, element, value)
           atom_element = element.gsub(/^atom_/, '')
+
+          if DATE_PROPERTIES.include?(element)
+            value = Roar::Atom::DateHelper.format_date_element(value)
+          end
 
           if namespace.include?(atom_element)
             output.send("#{atom_element}=", value)
