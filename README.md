@@ -3,6 +3,8 @@
 Roar::Atom is a representable back-end that generates Atom feeds.
 It uses [Roar](https://github.com/apotonick/roar#roar) to define the structure of your [Atom](http://atomenabled.org/developers/syndication/) feed and [rAtom](https://github.com/seangeo/ratom) to work with the Atom Syndication Format.
 
+![Roar!](https://cloud.githubusercontent.com/assets/736319/16621454/8a41b058-4396-11e6-8f2a-ee2441f335cd.gif)
+
 ## Configuration
 
 Add this line to your application's Gemfile:
