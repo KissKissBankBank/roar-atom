@@ -8,7 +8,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 Features:
 
-- Update gemfile
 - Update minimum `roar` version
 
 ## [v0.3.0] - 2016-07-06
