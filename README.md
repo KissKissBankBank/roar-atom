@@ -254,3 +254,19 @@ avengers.to_atom
 #   <ns1:custom_friend>Hawkeye</ns1:custom_friend>
 # </feed>
 ```
+
+## Development
+
+Setup development:
+
+```sh
+$ gem install roar
+$ gem install ratom
+$ gem install rspec 
+```
+
+Test the CLI:
+
+```sh
+$ rspec .
+```
