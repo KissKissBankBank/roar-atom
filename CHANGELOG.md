@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [v0.4.0] - 2019-06-19
 
-New feature:
+Features:
 
 - Update gemfile
 - Update gemspec
