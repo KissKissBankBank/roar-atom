@@ -4,6 +4,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased]
 
+## [v0.4.0] - 2019-06-19
+
+Features:
+
+- Update minimum `roar` version
+
 ## [v0.3.0] - 2016-07-06
 
 New feature:
